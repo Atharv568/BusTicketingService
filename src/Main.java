@@ -17,19 +17,32 @@ public class Main {
             System.out.println("Total Seats: " + resultSet.getInt("capacity"));
         }
     }
-    public static void passengerDetail(String name, int age, int amount ) throws SQLException{
+    public static void passengerDetail(String name, int age, int amount, int bus_no, int No ) throws SQLException{
       Connection connection = DriverManager.getConnection(url, username, password);
-      String query = "Insert into passengers(name, age, amount) values (?, ?, ?)";
+      String query = "Insert into passengers(name, age, amount, bus_id) values (?, ?, ?, ?)";
       PreparedStatement prepareStatement= connection.prepareStatement(query);
       prepareStatement.setString(1, name);
       prepareStatement.setInt(2, age);
       prepareStatement.setInt(3, amount);
+      prepareStatement.setInt(4, bus_no);
       int rowsAffected =prepareStatement.executeUpdate();
       if(rowsAffected>0){
           System.out.print("Ticket is booked Successfully");
       } else{
           System.out.println("Sorry for the inconvinence caused, can't book right now ! ");
       }
+      String query1 = "update bus set capacity = capacity - ? where bus_no =?";
+      PreparedStatement prepareStatement1 = connection.prepareStatement(query1);
+      prepareStatement1.setInt(1,No);
+      prepareStatement1.setInt(2,bus_no);
+
+        int updatedRows = prepareStatement1.executeUpdate();
+
+        if (updatedRows > 0) {
+            System.out.println("Ticket booked successfully");
+        } else {
+            System.out.println("Seat update failed");
+        }
     }
     public static void main (String args[]){
         try{
@@ -43,7 +56,7 @@ public class Main {
             Connection connection = DriverManager.getConnection(url, username, password);
             Scanner sc = new Scanner(System.in);
             System.out.println("Welcome to Lucknow Bus Terminal");
-            System.out.println("Choose the option : \n 1. Bus Details \n 2. Passenger Bookings");
+            System.out.print("Choose the option : \n 1. Bus Details \n 2. Passenger Bookings :");
             int choice= sc.nextInt();
             sc.nextLine();
             if(choice==1){
@@ -51,14 +64,18 @@ public class Main {
                  int id = sc.nextInt();
                  busDetail(id);
             }else{
-                 System.out.print("Enter the details of the passenger : ");
-                 System.out.println("Name :");
+                 System.out.println("Enter the details of the passenger : ");
+                 System.out.print("Name : ");
                  String name= sc.nextLine();
-                 System.out.println("Age : ");
+                 System.out.print("Age : ");
                  int age = sc.nextInt();
+                 System.out.print("No. of tickets ");
+                 int No = sc.nextInt();
                  System.out.print("Amount : ");
                  int amount = sc.nextInt();
-                 passengerDetail(name, age, amount);
+                 System.out.print("Bus no : ");
+                 int bus_no= sc.nextInt();
+                 passengerDetail(name, age, amount, bus_no, No);
             }
         }catch( SQLException e){
             e.printStackTrace();
