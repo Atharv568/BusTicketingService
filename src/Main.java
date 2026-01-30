@@ -12,29 +12,57 @@ public class Main {
         ResultSet resultSet = prepareStatement.executeQuery();
         if(resultSet.next()){
             System.out.println("Your bus details for Bus id "+ bus_no + " are :\n");
-            System.out.println("Bus ID: " + resultSet.getInt("bus_no"));
+            System.out.println("Bus NO: " + resultSet.getInt("bus_no"));
             System.out.println("Availability " + resultSet.getBoolean("is_available"));
             System.out.println("Total Seats: " + resultSet.getInt("capacity"));
         }
     }
+    public static void All_bus() throws SQLException{
+        Connection connection = DriverManager.getConnection(url, username, password);
+        String query = "Select bus_no, source, destination from bus";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ResultSet resultset= preparedStatement.executeQuery();
+        System.out.print("BusNO"+ " ");
+        System.out.print("Source" + "  ");
+        System.out.println("Destination"+ " ");
+        while(resultset.next()){
+            int id = resultset.getInt("bus_no");
+            String source = resultset.getString("source");
+            String destination = resultset.getString("destination");
+            System.out.print(id+ "   ");
+            System.out.print(source + "  ");
+            System.out.println(destination+ " ");
+        }
+    }
+    public static int CheckSeat(int bus_no) throws SQLException{
+        Connection connection = DriverManager.getConnection(url,username,password);
+        String query= "select capacity from bus where bus_no = ?";
+        PreparedStatement preparedStatement= connection.prepareStatement(query);
+        preparedStatement.setInt(1, bus_no);
+        ResultSet resultset = preparedStatement.executeQuery();
+        if (resultset.next()) {
+            return resultset.getInt("capacity");
+        }
+        return 0;
+    }
     public static void passengerDetail(String name, int age, int amount, int bus_no, int No ) throws SQLException{
-      Connection connection = DriverManager.getConnection(url, username, password);
-      String query = "Insert into passengers(name, age, amount, bus_id) values (?, ?, ?, ?)";
-      PreparedStatement prepareStatement= connection.prepareStatement(query);
-      prepareStatement.setString(1, name);
-      prepareStatement.setInt(2, age);
-      prepareStatement.setInt(3, amount);
-      prepareStatement.setInt(4, bus_no);
-      int rowsAffected =prepareStatement.executeUpdate();
-      if(rowsAffected>0){
-          System.out.print("Ticket is booked Successfully");
-      } else{
-          System.out.println("Sorry for the inconvinence caused, can't book right now ! ");
-      }
-      String query1 = "update bus set capacity = capacity - ? where bus_no =?";
-      PreparedStatement prepareStatement1 = connection.prepareStatement(query1);
-      prepareStatement1.setInt(1,No);
-      prepareStatement1.setInt(2,bus_no);
+        Connection connection = DriverManager.getConnection(url, username, password);
+        String query = "Insert into passengers(name, age, amount, bus_id) values (?, ?, ?, ?)";
+        PreparedStatement prepareStatement= connection.prepareStatement(query);
+        prepareStatement.setString(1, name);
+        prepareStatement.setInt(2, age);
+        prepareStatement.setInt(3, amount);
+        prepareStatement.setInt(4, bus_no);
+        int rowsAffected =prepareStatement.executeUpdate();
+        if(rowsAffected>0){
+            System.out.print("");
+        } else{
+            System.out.println("Sorry for the inconvinence caused, can't book right now ! ");
+        }
+        String query1 = "update bus set capacity = capacity - ? where bus_no =?";
+        PreparedStatement prepareStatement1 = connection.prepareStatement(query1);
+        prepareStatement1.setInt(1,No);
+        prepareStatement1.setInt(2,bus_no);
 
         int updatedRows = prepareStatement1.executeUpdate();
 
@@ -60,22 +88,32 @@ public class Main {
             int choice= sc.nextInt();
             sc.nextLine();
             if(choice==1){
-                 System.out.print("Enter the bus id : ");
-                 int id = sc.nextInt();
-                 busDetail(id);
+                System.out.println("The details of upcomming buses are : ");
+                All_bus();
+                System.out.print("Enter the bus No : ");
+                int id = sc.nextInt();
+                busDetail(id);
             }else{
-                 System.out.println("Enter the details of the passenger : ");
-                 System.out.print("Name : ");
-                 String name= sc.nextLine();
-                 System.out.print("Age : ");
-                 int age = sc.nextInt();
-                 System.out.print("No. of tickets ");
-                 int No = sc.nextInt();
-                 System.out.print("Amount : ");
-                 int amount = sc.nextInt();
-                 System.out.print("Bus no : ");
-                 int bus_no= sc.nextInt();
-                 passengerDetail(name, age, amount, bus_no, No);
+                System.out.println("Enter bus No: ");
+                int id = sc.nextInt();
+                int seat =CheckSeat(id);
+                if(seat>0) {
+                    sc.nextLine();
+                    System.out.println("Enter the details of the passenger : ");
+                    System.out.print("Name : ");
+                    String name = sc.nextLine();
+                    System.out.print("Age : ");
+                    int age = sc.nextInt();
+                    System.out.print("No. of tickets ");
+                    int No = sc.nextInt();
+                    System.out.print("Amount : ");
+                    int amount = sc.nextInt();
+                    System.out.print("Bus no : ");
+                    int bus_no = sc.nextInt();
+                    passengerDetail(name, age, amount, bus_no, No);
+                } else {
+                    System.out.println("Regret all tickets are booked");
+                }
             }
         }catch( SQLException e){
             e.printStackTrace();
