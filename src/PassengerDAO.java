@@ -5,12 +5,13 @@ import java.sql.SQLException;
 public class PassengerDAO {
     public static void passengerDetail(String name, int age, int amount, int bus_no, int No ) throws SQLException {
         Connection connection = DBConnection.getConnection();
-        String query = "Insert into passengers(name, age, amount, bus_id) values (?, ?, ?, ?)";
+        String query = "Insert into passengers(name, age, amount, bus_id, No_of_tickets) values (?, ?, ?, ?, ?)";
         PreparedStatement prepareStatement= connection.prepareStatement(query);
         prepareStatement.setString(1, name);
         prepareStatement.setInt(2, age);
         prepareStatement.setInt(3, amount);
         prepareStatement.setInt(4, bus_no);
+        prepareStatement.setInt(5,No);
         int rowsAffected =prepareStatement.executeUpdate();
         if(rowsAffected>0){
             System.out.print("");

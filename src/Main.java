@@ -15,19 +15,20 @@ public class Main {
             Scanner sc = new Scanner(System.in);
             System.out.println("Welcome to Lucknow Bus Terminal");
             System.out.print("Choose the option : \n 1. Bus Details \n 2. Passenger Bookings :\n 3. Cancel Ticekt : ");
-            int choice= sc.nextInt();
+            int choice = sc.nextInt();
             sc.nextLine();
-            if(choice==1){
+            while(true){
+                if (choice == 1) {
                 System.out.println("The details of upcomming buses are : ");
                 BusDAO.All_bus();
                 System.out.print("Enter the bus No : ");
                 int id = sc.nextInt();
                 BusDAO.busDetail(id);
-            }else if (choice==2){
+            } else if (choice == 2) {
                 System.out.println("Enter bus No: ");
                 int id = sc.nextInt();
-                int seat =BusDAO.CheckSeat(id);
-                if(seat>0) {
+                int seat = BusDAO.CheckSeat(id);
+                if (seat > 0) {
                     sc.nextLine();
                     System.out.println("Enter the details of the passenger : ");
                     System.out.print("Name : ");
@@ -46,10 +47,19 @@ public class Main {
 
                 }
             } else {
+
                 System.out.print("Enter your pass_id : ");
                 int pass_id = sc.nextInt();
-                CancelTicket.cancelTicket(pass_id);
-            }
+                    CancelTicket.cancelTicket(pass_id);
+
+
+                }
+                System.out.print("Do you want to continue: \n Enter the (Y\\N) ");
+                char x= sc.next().charAt(0);
+                if(Character.toUpperCase(x)=='N'){
+                    break;
+                }
+        }
         }catch( SQLException e){
             e.printStackTrace();
 
