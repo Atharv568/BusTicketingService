@@ -1,77 +1,7 @@
 import java.sql.*;
 import java.util.*;
 public class Main {
-    private static final String url ="jdbc:mysql://localhost:3306/busticketing_db";
-    private static final String username ="root";
-    private static final String password ="Atharv@568";
-    public static void busDetail(int bus_no ) throws SQLException{
-        Connection connection = DriverManager.getConnection(url, username, password);
-        String query = "Select * from bus where bus_no = ?";
-        PreparedStatement prepareStatement = connection.prepareStatement(query);
-        prepareStatement.setInt(1, bus_no);
-        ResultSet resultSet = prepareStatement.executeQuery();
-        if(resultSet.next()){
-            System.out.println("Your bus details for Bus id "+ bus_no + " are :\n");
-            System.out.println("Bus NO: " + resultSet.getInt("bus_no"));
-            System.out.println("Availability " + resultSet.getBoolean("is_available"));
-            System.out.println("Total Seats: " + resultSet.getInt("capacity"));
-        }
-    }
-    public static void All_bus() throws SQLException{
-        Connection connection = DriverManager.getConnection(url, username, password);
-        String query = "Select bus_no, source, destination from bus";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        ResultSet resultset= preparedStatement.executeQuery();
-        System.out.print("BusNO"+ " ");
-        System.out.print("Source" + "  ");
-        System.out.println("Destination"+ " ");
-        while(resultset.next()){
-            int id = resultset.getInt("bus_no");
-            String source = resultset.getString("source");
-            String destination = resultset.getString("destination");
-            System.out.print(id+ "   ");
-            System.out.print(source + "  ");
-            System.out.println(destination+ " ");
-        }
-    }
-    public static int CheckSeat(int bus_no) throws SQLException{
-        Connection connection = DriverManager.getConnection(url,username,password);
-        String query= "select capacity from bus where bus_no = ?";
-        PreparedStatement preparedStatement= connection.prepareStatement(query);
-        preparedStatement.setInt(1, bus_no);
-        ResultSet resultset = preparedStatement.executeQuery();
-        if (resultset.next()) {
-            return resultset.getInt("capacity");
-        }
-        return 0;
-    }
-    public static void passengerDetail(String name, int age, int amount, int bus_no, int No ) throws SQLException{
-        Connection connection = DriverManager.getConnection(url, username, password);
-        String query = "Insert into passengers(name, age, amount, bus_id) values (?, ?, ?, ?)";
-        PreparedStatement prepareStatement= connection.prepareStatement(query);
-        prepareStatement.setString(1, name);
-        prepareStatement.setInt(2, age);
-        prepareStatement.setInt(3, amount);
-        prepareStatement.setInt(4, bus_no);
-        int rowsAffected =prepareStatement.executeUpdate();
-        if(rowsAffected>0){
-            System.out.print("");
-        } else{
-            System.out.println("Sorry for the inconvinence caused, can't book right now ! ");
-        }
-        String query1 = "update bus set capacity = capacity - ? where bus_no =?";
-        PreparedStatement prepareStatement1 = connection.prepareStatement(query1);
-        prepareStatement1.setInt(1,No);
-        prepareStatement1.setInt(2,bus_no);
 
-        int updatedRows = prepareStatement1.executeUpdate();
-
-        if (updatedRows > 0) {
-            System.out.println("Ticket booked successfully");
-        } else {
-            System.out.println("Seat update failed");
-        }
-    }
     public static void main (String args[]){
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -81,7 +11,7 @@ public class Main {
 
         }
         try {
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = DBConnection.getConnection();
             Scanner sc = new Scanner(System.in);
             System.out.println("Welcome to Lucknow Bus Terminal");
             System.out.print("Choose the option : \n 1. Bus Details \n 2. Passenger Bookings :");
@@ -89,14 +19,14 @@ public class Main {
             sc.nextLine();
             if(choice==1){
                 System.out.println("The details of upcomming buses are : ");
-                All_bus();
+                BusDAO.All_bus();
                 System.out.print("Enter the bus No : ");
                 int id = sc.nextInt();
-                busDetail(id);
+                BusDAO.busDetail(id);
             }else{
                 System.out.println("Enter bus No: ");
                 int id = sc.nextInt();
-                int seat =CheckSeat(id);
+                int seat =BusDAO.CheckSeat(id);
                 if(seat>0) {
                     sc.nextLine();
                     System.out.println("Enter the details of the passenger : ");
@@ -110,7 +40,7 @@ public class Main {
                     int amount = sc.nextInt();
                     System.out.print("Bus no : ");
                     int bus_no = sc.nextInt();
-                    passengerDetail(name, age, amount, bus_no, No);
+                    PassengerDAO.passengerDetail(name, age, amount, bus_no, No);
                 } else {
                     System.out.println("Regret all tickets are booked");
                 }
