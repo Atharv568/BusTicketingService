@@ -25,7 +25,9 @@ public class PassengerDAO {
         int updatedRows = prepareStatement1.executeUpdate();
 
         if (updatedRows > 0) {
+
             System.out.println("Ticket booked successfully");
+            PassengeridDAO.ShowPassengerID(name, age);
         } else {
             System.out.println("Seat update failed");
         }

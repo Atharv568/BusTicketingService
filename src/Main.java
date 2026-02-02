@@ -14,7 +14,7 @@ public class Main {
             Connection connection = DBConnection.getConnection();
             Scanner sc = new Scanner(System.in);
             System.out.println("Welcome to Lucknow Bus Terminal");
-            System.out.print("Choose the option : \n 1. Bus Details \n 2. Passenger Bookings :");
+            System.out.print("Choose the option : \n 1. Bus Details \n 2. Passenger Bookings :\n 3. Cancel Ticekt : ");
             int choice= sc.nextInt();
             sc.nextLine();
             if(choice==1){
@@ -23,7 +23,7 @@ public class Main {
                 System.out.print("Enter the bus No : ");
                 int id = sc.nextInt();
                 BusDAO.busDetail(id);
-            }else{
+            }else if (choice==2){
                 System.out.println("Enter bus No: ");
                 int id = sc.nextInt();
                 int seat =BusDAO.CheckSeat(id);
@@ -43,7 +43,12 @@ public class Main {
                     PassengerDAO.passengerDetail(name, age, amount, bus_no, No);
                 } else {
                     System.out.println("Regret all tickets are booked");
+
                 }
+            } else {
+                System.out.print("Enter your pass_id : ");
+                int pass_id = sc.nextInt();
+                CancelTicket.cancelTicket(pass_id);
             }
         }catch( SQLException e){
             e.printStackTrace();
